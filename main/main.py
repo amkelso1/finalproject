@@ -10,6 +10,6 @@ from func import black_jack_func as bjfunc
 
 game = bjfunc.BlackJack()
 game.start_game()
-game.deal_hand()
+game.deal()
 
 
