@@ -1,5 +1,6 @@
 import unittest
 from func import black_jack_func as bljk
+from func import card_game as cd
 
 
 class MyTestCase(unittest.TestCase):

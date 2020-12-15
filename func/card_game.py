@@ -2,7 +2,7 @@
 Author: Alex Kelso
 Date: 11/28/2020
 Program: BlackJack.py
-Purpose: Provide a full working game of black jack with a dealer and player capabilities
+Purpose: Card game class for basic card game functions
 """
 
 
@@ -19,11 +19,11 @@ class CardGame:
             for j in card_key:
                 self.deck.append(j + ' of ' + i)
 
-    def reset_game(self):
+    def reset_game(self, reset_game):
         pass
 
-    def remove_card_from_deck(self):
-        pass
+    def remove_card_from_deck(self, remove_card):
+        self.deck.remove(remove_card)
 
 
 
