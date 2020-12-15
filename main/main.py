@@ -5,11 +5,10 @@ Program: BlackJack.py
 Purpose: Provide a full working game of black jack with a dealer and player capabilities
 """
 
-from func import black_jack_func as bjfunc
+from func import black_jack_func as bj
 
 
-game = bjfunc.BlackJack()
-game.start_game()
-game.deal()
+blackjack = bj.BlackJack()
+blackjack.deal()
 
 
