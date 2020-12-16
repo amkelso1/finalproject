@@ -81,9 +81,16 @@ class BlackJack(cd.CardGame):
                         print(i, ' | ', end='')
                     self.instant_win()
                     self.again = False
-                else:
-                    print('\nWould you like to hit? yes or no?')
-                    answer = str(input())
+
+                # input validation for hit again question
+                repeat = True
+                while repeat:
+                    answer = (input('\nWould you like to hit? yes or no?'))
+                    if answer in y or answer in n:
+                        repeat = False
+                    else:
+                        print('invalid, please try again')
+                        repeat = True
 
                     # adds card to hand and prints hand(yes, hit option)
                     if answer in y:
@@ -117,7 +124,7 @@ class BlackJack(cd.CardGame):
                         self.no_hit_score()
                         self.again = False
 
-            # loops until answer is a valid yes or no
+            # input validation for play again question
             repeat = True
             while repeat:
                 again_answer = input('\nWould you like to play again? \'y\' or \'n\'\n')
@@ -131,6 +138,9 @@ class BlackJack(cd.CardGame):
                     self.again = False
                     self.play = False
                     repeat = False
+                else:
+                    repeat = True
+                    print('Invalid Answer, Please try again.')
 
     # function for dealer and/or player win on initial cards dealt
     def instant_win(self):
