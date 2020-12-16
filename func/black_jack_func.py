@@ -11,6 +11,7 @@ from func import card_game as cd
 
 class BlackJack(cd.CardGame):
     """Subclass BlackJack Child of CardGame"""
+
     def __init__(self):
         super().__init__()
         self.bj_deck = cd.CardGame().deck
@@ -18,7 +19,8 @@ class BlackJack(cd.CardGame):
         self.d_hand = []
         self.total = 0
         self.d_total = 0
-        self.play_again = True
+        self.again = True
+        self.play = True
 
     # gets the value of the player's and dealer's card / adding them to a separate total
     def card_value(self, card_drawn, d_card_drawn):
@@ -45,37 +47,48 @@ class BlackJack(cd.CardGame):
 
     # runs the main gameplay / decision making code
     def deal(self):
-        cd.CardGame.start_game(self, 'BlackJack')
         # for loop to draw card and remove from deck as well as print results
-        for i in range(2):
-            card_drawn = random.choice(list(self.bj_deck))
-            self.bj_deck.remove(card_drawn)
-            self.hand.append(card_drawn)
-            d_card_drawn = random.choice(list(self.bj_deck))
-            self.bj_deck.remove(d_card_drawn)
-            self.d_hand.append(d_card_drawn)
-            self.card_value(card_drawn, d_card_drawn)
-            # print(self.d_hand)  # for testing purposes
-            # print(len(self.bj_deck.deck))  # verifying card removal from deck
-        print('Dealer\'s Hand: {} | {}'.format('Face Down', self.d_hand[1]))  # prints dealer's hand. one card face down
-        print('Dealer Hand\'s Total: ', self.d_total, '\n')  # for testing purposes only
-        print('Your Current Hand: {} | {}'.format(self.hand[0], self.hand[1]))
-        print('Your Hand\'s Total: ', self.total)
+        while self.play:
+            self.total = 0
+            self.d_total = 0
+            self.hand = []
+            self.d_hand = []
+            for i in range(2):
+                card_drawn = random.choice(list(self.bj_deck))
+                self.bj_deck.remove(card_drawn)
+                self.hand.append(card_drawn)
+                d_card_drawn = random.choice(list(self.bj_deck))
+                self.bj_deck.remove(d_card_drawn)
+                self.d_hand.append(d_card_drawn)
+                self.card_value(card_drawn, d_card_drawn)
+                # print(self.d_hand)  # for testing purposes
+            print('____________________________________________')
+            print('Dealer\'s Hand: {} | {}'.format('Face Down', self.d_hand[1]))  # prints dealer's hand. one card face down
+            # print('Dealer Hand\'s Total: ', self.d_total, '\n')  # for testing purposes only
+            print('\nYour Current Hand: {} | {}'.format(self.hand[0], self.hand[1]))
+            print('Your Hand\'s Total: ', self.total)
 
-        # hit or not hit prompt and functionality
-        y = ['Yes', 'yes', 'y']
-        n = ['No', 'no', 'n']
+            # answer possibilities
+            y = ['Yes', 'yes', 'y']
+            n = ['No', 'no', 'n']
 
-        while self.play_again:
-            try:
-                if self.total == 21 or self.d_total == 21:
+            # loop for hit or stand
+            while self.again:
+                # check for win from first two cards
+                if self.total == 21:
+                    print('\nDealer\'s Hand: ', end="")
+                    for i in self.d_hand:
+                        print(i, ' | ', end='')
                     self.instant_win()
+                    self.again = False
                 else:
                     print('\nWould you like to hit? yes or no?')
                     answer = str(input())
-                    # follow up loop for hit or no hit choice
-                    while answer not in n:
-                        if answer in y:
+
+                    # adds card to hand and prints hand(yes, hit option)
+                    if answer in y:
+                            print('____________________________________________')
+                            print('Dealer\'s Hand: {} | {}'.format('Face Down', self.d_hand[1]))
                             card_drawn = random.choice(list(self.bj_deck))
                             self.bj_deck.remove(card_drawn)
                             self.hand.append(card_drawn)
@@ -84,59 +97,86 @@ class BlackJack(cd.CardGame):
                             for i in self.hand:
                                 print(i, ' | ', end='')
                             print('\nYour Hand\'s Total: ', self.total)
-                            print('\nDealer\'s Hand\'s total: ', self.d_total)
+                            # print('\nDealer\'s Hand\'s total: ', self.d_total) for testing dealers total
                             self.yes_hit_score()
-                            answer = str(input())
-                    while self.d_total < 16:
-                        d_card_drawn = random.choice(list(self.bj_deck))
-                        self.bj_deck.remove(d_card_drawn)
-                        self.d_hand.append(d_card_drawn)
-                        self.card_value('0 of Null', d_card_drawn)  # '0 of Null' so that player doesnt draw extra cards
-                    self.no_hit_score_score()
-                    print('\nDealer\'s Hand: ', end="")
-                    for i in self.d_hand:
-                        print(i, ' | ', end='')
-                    print('\nDealer Hand\'s Total: ', self.d_total)  # dealer score for testing purposes
-                    print('\nYour Hand: ', end="")
-                    for i in self.hand:
-                        print(i, ' | ', end='')
-                    print('\nYour Hand\'s Total: ', self.total)
-                    print('\nDealer\'s Hand\'s total: ', self.d_total)
-            except ValueError:
-                print('Please Retry')
+                    # ends turn and draws final cards for dealer --> prints results
+                    elif answer in n:
+                        while self.d_total < 17:
+                            d_card_drawn = random.choice(list(self.bj_deck))
+                            self.bj_deck.remove(d_card_drawn)
+                            self.d_hand.append(d_card_drawn)
+                            self.card_value('0 of Null', d_card_drawn)  # '0 of Null' so that player doesnt draw
+                        print('\nDealer\'s Hand: ', end="")
+                        for i in self.d_hand:
+                            print(i, ' | ', end='')
+                        print('\nDealer Hand\'s Total: ', self.d_total)  # dealer score for testing purposes
+                        print('\nYour Hand: ', end="")
+                        for i in self.hand:
+                            print(i, ' | ', end='')
+                        print('\nYour Hand\'s Total: ', self.total)
+                        self.no_hit_score()
+                        self.again = False
+
+            # loops until answer is a valid yes or no
+            repeat = True
+            while repeat:
+                again_answer = input('\nWould you like to play again? \'y\' or \'n\'\n')
+                if again_answer in y:
+                    self.play = True
+                    self.again = True
+                    repeat = False
+                    self.bj_deck = cd.CardGame().deck
+                elif again_answer in n:
+                    print('Goodbye!')
+                    self.again = False
+                    self.play = False
+                    repeat = False
 
     # function for dealer and/or player win on initial cards dealt
     def instant_win(self):
         if self.total == 21:
             if self.d_total != 21:
-                print('HECK YEAH! WINNER!!!')
-                self.play_again = False
+                print('\n\nHECK YEAH! WINNER!!!')
+                self.again = False
             else:
-                print('It\'s a Push!')
-                self.play_again = False
-        elif self.d_total == 21:
-            print('Too Bad, Dealer Wins')
-            self.play_again = False
-    # function for win/loss possibilities
+                print('\nIt\'s a Push!')
+                self.again = False
 
-    def no_hit_score_score(self):
+    # function for win/loss possibilities
+    def no_hit_score(self):
         if self.total <= 21 and self.d_total <= 21:
             if self.total == 21 and self.d_total == 21:
-                print('It\'s a Push!')
+                print('\nIt\'s a Push!')
+                self.again = False
             elif self.d_total == self.total:
-                print('It\'s a Push')
+                print('\nIt\'s a Push')
+                self.again = False
             elif self.total == 21:
-                print('HECK YEAH! WINNER!!!')
+                print('\nHECK YEAH! WINNER!!!')
+                self.again = False
             elif self.total <= 21 and self.d_total <= 21:
                 if self.total > self.d_total:
-                    print('HECK YEAH! WINNER!!!')
+                    print('\nHECK YEAH! WINNER!!!')
+                    self.again = False
                 if self.d_total > self.total:
-                    print('Too Bad, Dealer Wins')
+                    print('\nToo Bad, Dealer Wins')
+                    self.again = False
         elif self.total > 21:
-            print('It\'s a Bust!')
+            print('\nIt\'s a Bust!')
+            self.again = False
         elif self.d_total > 21:
-            print('You Won! Dealer Bust!')
+            print('\nYou Won! Dealer Bust!')
+            self.again = False
 
+    # checks score after yes, hit option
     def yes_hit_score(self):
         if self.total > 21:
-            print('It\'s a Bust!')
+            print('\nIt\'s a Bust!')
+            self.again = False
+        elif self.total == 21:
+            if self.d_total != 21:
+                print('\nHECK YEAH! WINNER!!!')
+                self.again = False
+            else:
+                print('\nIt\'s a Push!')
+                self.again = False
